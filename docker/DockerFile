@@ -1,0 +1,10 @@
+FROM php:7.3-fpm-alpine3.12
+RUN docker-php-ext-install pdo pdo_mysql
+RUN apk add libzip-dev
+RUN docker-php-ext-install zip
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
+COPY src/ /var/www/html/
+RUN cat /var/www/html/composer.json
+RUN cd /var/www/html/ && composer install && composer dump-autoload 
+RUN cd /var/www/html/ && php artisan key:generate
